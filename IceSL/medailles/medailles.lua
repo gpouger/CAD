@@ -1,4 +1,4 @@
- -- welcome to IceSL!
+require "utils"
 
 function medaille_base(diam, height, border, bottom_height)
     -- produce the base shape of the medal, x/y centered and bottom at z=0
@@ -9,39 +9,6 @@ function medaille_base(diam, height, border, bottom_height)
     holder = difference(holder, ccylinder(diam/2, height))
 
     return translate(0,0,height/2)*union(base_shape, holder)
-end
-
-function z_scale(shape, height)
-    shape_bbox = bbox(shape)
-    z_scale_factor = height / shape_bbox:extent().z
-    return scale(1, 1, z_scale_factor)*shape
-end
-
-function xy_scale(shape, diam)
-    shape_bbox = bbox(shape)
-    max_dimension = math.max(shape_bbox:extent().x, shape_bbox:extent().y)
-    xy_scale_factor = diam / max_dimension
-    return scale(xy_scale_factor, xy_scale_factor, 1)*shape
-end
-
-function center_shape(shape)
-    -- center the shape
-    shape_bbox = bbox(shape)
-    shape_center = shape_bbox:center()
-    return translate(-shape_center.x, -shape_center.y, -(shape_center.z-shape_bbox:extent().z/2))*shape
-end
-
-function center_and_scale_shape(shape, diam, height)
-    -- center the shape
-    shape = center_shape(shape)
-
-    -- scale it to have the desired height
-    shape = z_scale(shape, height)
-
-    -- scale it to fit the given diameter
-    shape = xy_scale(shape, diam)
-
-    return shape
 end
 
 function center_letter(letter, diam, height)
@@ -123,6 +90,8 @@ function emit_grid(shapes, nb_col, spacing)
     end
 end
 
-all_medals = {medaille_conjugaison(), medaille_orthographe(), medaille_grammaire(), medaille_multiplication(), medaille_geographie(), medaille_mesures(), medaille_geometrie()}
+--all_medals = {medaille_conjugaison(), medaille_orthographe(), medaille_grammaire(), medaille_multiplication(), medaille_geographie(), medaille_mesures(), medaille_geometrie()}
 
-emit_grid(all_medals, 3, 5)
+--emit_grid(all_medals, 3, 5)
+
+emit(medaille_conjugaison())

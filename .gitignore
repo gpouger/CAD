@@ -1,5 +1,4 @@
 *.gcode
 *.stl
-IceSL/heart/imgui.ini
-
+*imgui.ini
 *.lua~

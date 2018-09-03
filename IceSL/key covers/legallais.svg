@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="legallais.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="584.48123"
+     inkscape:cy="601.6457"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1842"
+     inkscape:window-height="1057"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       position="108.47916,175.38096"
+       orientation="1,0"
+       id="guide831"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="chemin">
+    <path
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 410 272.16211 C 310.12761 271.89652 230.30081 303.05052 208.10156 316.34375 C 186.9076 329.03501 180.71345 345.0198 178.92773 362.87695 C 177.14202 380.73409 180.14844 496.96875 180.14844 496.96875 C 180.14844 496.96875 184.01497 524.51541 206.17578 540.69141 C 224.73976 549.57666 254.99941 556.09154 286.78516 570.73438 C 310.71372 581.80582 319.28516 610.73438 319.28516 610.73438 L 320.71484 662.16211 L 410 662.16211 L 499.28516 662.16211 L 500.71484 610.73438 C 500.71484 610.73438 509.28628 581.80582 533.21484 570.73438 C 565.00059 556.09154 595.26024 549.57666 613.82422 540.69141 C 635.98503 524.51541 639.85156 496.96875 639.85156 496.96875 C 639.85156 496.96875 642.85798 380.73409 641.07227 362.87695 C 639.28655 345.0198 633.0924 329.03501 611.89844 316.34375 C 589.69919 303.05052 509.87239 271.89652 410 272.16211 z "
+       transform="scale(0.26458333)"
+       id="path833" />
+  </g>
+</svg>

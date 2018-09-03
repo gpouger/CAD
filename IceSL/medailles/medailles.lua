@@ -11,33 +11,26 @@ function medaille_base(diam, height, border, bottom_height)
     return translate(0,0,height/2)*union(base_shape, holder)
 end
 
-function center_letter(letter, diam, height)
-    font_path = Path .. "ARIALBD.TTF"
-    f = font(font_path)
-    txt = f:str(letter, 10)
-
-    return center_and_scale_shape(txt, diam, height)
-end
-
-base = medaille_base(40, 3, 2, 1)
+params_medaille_base = {diam=40, height=3, border_width=2, bottom_height=1}
+base = medaille_base(params_medaille_base.diam, params_medaille_base.height, params_medaille_base.border_width, params_medaille_base.bottom_height)
 
 function medaille_conjugaison()
-    letter = center_letter("C", 25, 3)
+    letter = center_text("C", 25, 3)
     return union(base, letter)
 end
 
 function medaille_orthographe()
-    letter = center_letter("O", 25, 3)
+    letter = center_text("O", 25, 3)
     return union(base, letter)
 end
 
 function medaille_grammaire()
-    letter = center_letter("G", 25, 3)
+    letter = center_text("G", 25, 3)
     return union(base, letter)
 end
 
 function medaille_multiplication()
-    letter = center_letter("+", 25, 3)
+    letter = center_text("+", 25, 3)
     letter = rotate(0, 0, 45)*letter
     return union(base, letter)
 end
@@ -56,42 +49,65 @@ function medaille_geographie()
 end
 
 function medaille_mesures()
-    svg_shapes = svg_ex('ruler.svg', 90)
-    svg_shape = linear_extrude(v(0, 0, 3), svg_shapes[1]:outline())
-
-    svg_shape = center_and_scale_shape(rotate(0, 0, 180)*svg_shape, 25, 3)
+    svg_shape = center_and_scale_shape(rotate(0, 0, 180)*extrude_svg('ruler.svg', 3), 25, 3)
     return union(base, svg_shape)
 end
 
 function medaille_geometrie()
-    svg_shapes = svg_ex('compas.svg', 90)
-    svg_shape = linear_extrude(v(0, 0, 3), svg_shapes[2]:outline())
-
-    svg_shape = center_and_scale_shape(rotate(0, 0, 180)*svg_shape, 25, 3)
+    svg_shape = center_and_scale_shape(rotate(0, 0, 180)*extrude_svg('compas.svg', 3), 25, 3)
     return union(base, svg_shape)
 end
 
-function emit_grid(shapes, nb_col, spacing)
-    max_size_x=0
-    max_size_y=0
-    for i, shape in ipairs(shapes) do
-        s_bbox = bbox(shape)
-        max_size_x = math.max(s_bbox:extent().x, max_size_x)
-        max_size_y = math.max(s_bbox:extent().y, max_size_y)
-    end
+function medaille_lit()
+    svg_shape = center_and_scale_shape(rotate(0, 0, 180)*extrude_svg('bed.svg', 3), 25, 3)
+    return union(base, svg_shape)
+end
 
-    x_step = max_size_x + spacing
-    y_step = max_size_y + spacing
+params_medaille_griffon = {diam=50, height=4, border_width=2.5, bottom_height=2}
+base_griffon = medaille_base(params_medaille_griffon.diam, params_medaille_griffon.height, params_medaille_griffon.border_width, params_medaille_griffon.bottom_height)
 
-    for i, shape in ipairs(shapes) do
-        x = (i-1) % nb_col
-        y = math.floor((i-1) / nb_col)
-        emit(translate(x*x_step, y*y_step, 0) * center_shape(shape))
-    end
+function medaille_griffon_base()
+  diam = 50
+  height = 4
+  border_width = 2.5
+  border_height = 2
+  
+  svg_shape = center_and_scale_shape(rotate(0, 180, 180)*extrude_svg('griffon.svg', height), 30, height)
+  
+  return union(base_griffon, svg_shape)
+end
+
+
+
+function medaille_griffon_francais_bois()
+  med = union(medaille_griffon_base(), translate(0, -15, 0)*center_text("1", 10, 4, false))
+
+  txt1 = translate(0, 6, 0)*center_text("FRANCAIS", 40, 0.5, true, 1, "arlrdbd.ttf")
+  txt2 = translate(0, -2, 0)*center_text("GRIFFON", 30, 0.5, true, 1, "arlrdbd.ttf")
+  txt3 = translate(0, -10, 0)*center_text("DE BOIS", 30, 0.5, true, 1, "arlrdbd.ttf")
+
+  return difference({med, txt1, txt2, txt3})
+end
+
+function medaille_pot()
+  svg_shape = center_and_scale_shape(rotate(0, 180, 180)*extrude_svg('potty.svg', 4), 35, 4)
+
+  return union(base_griffon, svg_shape)
+end
+
+function adjust_print_speed_griffon()
+  set_setting_value("print_speed_mm_per_sec",
+    {[params_medaille_griffon.bottom_height-0.05]=40,
+     [params_medaille_griffon.bottom_height-0.02]=20,
+     [params_medaille_griffon.bottom_height+0.02]=20,
+     [params_medaille_griffon.bottom_height+0.05]=40,
+     [params_medaille_griffon.height-0.05]=40,
+     [params_medaille_griffon.height-0.02]=20,})
 end
 
 --all_medals = {medaille_conjugaison(), medaille_orthographe(), medaille_grammaire(), medaille_multiplication(), medaille_geographie(), medaille_mesures(), medaille_geometrie()}
 
---emit_grid(all_medals, 3, 5)
+--emit(group_grid(all_medals, 3, 5))
 
-emit(medaille_conjugaison())
+emit(medaille_pot())
+adjust_print_speed_griffon()

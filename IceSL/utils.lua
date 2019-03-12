@@ -94,4 +94,19 @@ function group_grid(shapes, nb_col, spacing)
 	
 	return s
 end
-
+
+local binpack_new = require('binpack')function build_plate(shapes, x_max, y_max, spacing)
+	-- usage: build_plate(shapes, 200, 260, 2)
+	y_max = y_max or x_max
+	spacing = spacing or 8
+	
+	local bp = binpack_new(x_max, y_max)
+	for i, shape in ipairs(shapes) do
+		local s_bbox = bbox(shape)
+        local s_center = s_bbox:center()
+		local s_min = s_bbox:min_corner()
+		local s_extent = s_bbox:extent()
+		local pos = bp:insert(s_extent.x+spacing, s_extent.y+spacing)
+		emit(translate(pos.x-s_min.x+spacing/2, pos.y-s_min.y+spacing/2, -(s_center.z-s_extent.z/2))*shape)
+    end
+end

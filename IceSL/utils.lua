@@ -11,6 +11,18 @@ function xy_scale(shape, diam)
     return scale(xy_scale_factor, xy_scale_factor, 1)*shape
 end
 
+function xy_scale_to_x(shape, want_x)
+    shape_bbox = bbox(shape)
+    xy_scale_factor = want_x / shape_bbox:extent().x
+    return scale(xy_scale_factor, xy_scale_factor, 1)*shape
+end
+
+function xy_scale_to_y(shape, want_y)
+    shape_bbox = bbox(shape)
+    xy_scale_factor = want_y / shape_bbox:extent().y
+    return scale(xy_scale_factor, xy_scale_factor, 1)*shape
+end
+
 function center_shape(shape)
     -- center the shape
     shape_bbox = bbox(shape)
@@ -72,6 +84,16 @@ function extrude_svg(svg_file, extrude_height)
 	return svg_shape
 end
 
+function group_grid_offset(index, nb_col, spacing, max_size_x, max_size_y)
+    x_step = max_size_x + spacing
+    y_step = max_size_y + spacing
+	
+	x = (index-1) % nb_col
+    y = math.floor((index-1) / nb_col)
+	
+	return v(x*x_step, y*y_step)
+end
+
 function group_grid(shapes, nb_col, spacing)
     max_size_x=0
     max_size_y=0
@@ -87,9 +109,8 @@ function group_grid(shapes, nb_col, spacing)
 	s = cube(0, 0, 0)
 
     for i, shape in ipairs(shapes) do
-        x = (i-1) % nb_col
-        y = math.floor((i-1) / nb_col)
-		s = union(s, translate(x*x_step, y*y_step, 0) * center_shape(shape))
+		offs = group_grid_offset(i, nb_col, spacing, max_size_x, max_size_y)
+		s = union(s, translate(offs.x, offs.y, 0) * center_shape(shape))
     end
 	
 	return s

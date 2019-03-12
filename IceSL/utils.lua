@@ -23,11 +23,23 @@ function xy_scale_to_y(shape, want_y)
     return scale(xy_scale_factor, xy_scale_factor, 1)*shape
 end
 
+function xy_offs_to_center(shape)
+	shape_bbox = bbox(shape)
+    shape_center = shape_bbox:center()
+	xy_offs = v(-shape_center.x, -shape_center.y, 0)
+	return xy_offs
+end
+
+function center_shape_xy(shape)
+	-- center the shape
+    return translate(xy_offs_to_center(shape))*shape
+end
+
 function center_shape(shape)
-    -- center the shape
+	-- center the shape
     shape_bbox = bbox(shape)
     shape_center = shape_bbox:center()
-    return translate(-shape_center.x, -shape_center.y, -(shape_center.z-shape_bbox:extent().z/2))*shape
+	return translate(-shape_center.x, -shape_center.y, -(shape_center.z-shape_bbox:extent().z/2))*shape
 end
 
 function center_and_scale_shape(shape, diam, height)

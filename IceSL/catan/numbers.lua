@@ -31,34 +31,35 @@ numbers_base = {{'A', '5', 4},
                {'R', '11', 2},
         }
 
-numbers_ext = {{'A', '2', 1},
+numbers_ext = {
+               {'A', '2', 1},
                {'B', '5', 4},
-               {'C', '4', 3},
-               {'D', '6', 5},
-               {'E', '3', 2},
-               {'F', '9', 4},
-               {'G', '8', 5},
-               {'H', '11', 2},
-               {'I', '11', 2},
-               {'J', '10', 3},
-               {'K', '6', 5},
-               {'L', '3', 2},
-               {'M', '8', 5},
-               {'N', '4', 3},
-               {'O', '8', 5},
-               {'P', '10', 3},
-               {'Q', '11', 2},
-               {'R', '12', 1},
-               {'S', '10', 3},
-               {'T', '5', 4},
-               {'U', '4', 3},
-               {'V', '9', 4},
-               {'W', '5', 4},
-               {'X', '9', 4},
-               {'Y', '12', 1},
-               {'Za', '3', 2},
-               {'Zb', '2', 1},
-               {'Zc', '6', 5},
+--               {'C', '4', 3},
+--               {'D', '6', 5},
+--               {'E', '3', 2},
+--               {'F', '9', 4},
+--               {'G', '8', 5},
+--               {'H', '11', 2},
+--               {'I', '11', 2},
+--               {'J', '10', 3},
+--               {'K', '6', 5},
+--               {'L', '3', 2},
+--               {'M', '8', 5},
+--               {'N', '4', 3},
+--               {'O', '8', 5},
+--               {'P', '10', 3},
+--               {'Q', '11', 2},
+--               {'R', '12', 1},
+--               {'S', '10', 3},
+--               {'T', '5', 4},
+--               {'U', '4', 3},
+--               {'V', '9', 4},
+--               {'W', '5', 4},
+--               {'X', '9', 4},
+--               {'Y', '12', 1},
+--               {'Za', '3', 2},
+--               {'Zb', '2', 1},
+--               {'Zc', '6', 5},
         }
 
 function number_token(letter, number, nb_dots)
@@ -108,34 +109,47 @@ function emit_tokens_black(tok_list)
   end
 end
 
-function set_params_black()
-  set_setting_value("num_shells_0", 0)
-  set_setting_value("num_shells_1", 2)
-  set_setting_value("cover_thickness_mm_0", 0)
-  set_setting_value("cover_thickness_mm_1", 0.6)
-  set_setting_value("infill_percentage_0", 0)
-  set_setting_value("infill_percentage_1", 20)
-  set_setting_value("print_perimeter_0", false)
-  set_setting_value("print_perimeter_1", true)
-  set_setting_value("z_lift", 0)
-  set_setting_value("first_layer_print_speed_mm_per_sec", 10)
-end
+function enable_brush(color)
+  if color == "black" then
+    enable_nb = 1
+    disable_nb = 0
+    z_lift = 0.2
+    brim = true
+    travel_without_retract = 0
+    fill_tiny_gaps = true
+  else
+    enable_nb = 0
+    disable_nb = 1
+    z_lift = 0.5
+    brim = false
+    travel_without_retract = 0
+    fill_tiny_gaps = true
+  end
+  layer_thickness = 0.2
+    
 
-function set_params_white()
-  set_setting_value("num_shells_0", 2)
-  set_setting_value("num_shells_1", 0)
-  set_setting_value("cover_thickness_mm_0", 0.6)
-  set_setting_value("cover_thickness_mm_1", 0)
-  set_setting_value("infill_percentage_0", 20)
-  set_setting_value("infill_percentage_1", 0)
-  set_setting_value("print_perimeter_0", true)
-  set_setting_value("print_perimeter_1", false)
-  set_setting_value("z_lift", 0.5)
+  set_setting_value("nozzle_diameter_mm", 0.4)
   set_setting_value("first_layer_print_speed_mm_per_sec", 10)
+  set_setting_value("z_layer_height_mm", layer_thickness)
+  set_setting_value("z_lift", z_lift)
+  set_setting_value("add_brim", brim)
+  set_setting_value("travel_max_length_without_retract", travel_without_retract)
+
+  set_setting_value("num_shells_" .. disable_nb, 0)
+  set_setting_value("cover_thickness_mm_" .. disable_nb, 0)
+  set_setting_value("infill_percentage_" .. disable_nb, 0)
+  set_setting_value("print_perimeter_" .. disable_nb, false)
+  set_setting_value("fill_tiny_gaps_" .. disable_nb, false)
+
+  set_setting_value("num_shells_" .. enable_nb, 2)
+  set_setting_value("cover_thickness_mm_" .. enable_nb, layer_thickness*3)
+  set_setting_value("infill_percentage_" .. enable_nb, 20)
+  set_setting_value("print_perimeter_" .. enable_nb, true)
+  set_setting_value("fill_tiny_gaps_" .. enable_nb, fill_tiny_gaps)
 end
 
 emit_tokens_black(get_tokens(numbers_ext))
 emit_tokens_white(get_tokens(numbers_ext))
 
-set_params_black()
-set_params_white()
+--enable_brush("black")
+enable_brush("white")

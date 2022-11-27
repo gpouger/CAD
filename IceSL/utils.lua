@@ -1,3 +1,22 @@
+function concat_lists(l1, l2)
+  for i=1,#l2 do
+        l1[#l1+1] = l2[i]
+    end
+    return l1
+end
+
+function scale_to_x(shape, want_x)
+	shape_bbox = bbox(shape)
+    scale_factor = want_x / shape_bbox:extent().x
+    return scale(scale_factor, scale_factor, scale_factor)*shape
+end
+
+function scale_to_y(shape, want_y)
+	shape_bbox = bbox(shape)
+    scale_factor = want_y / shape_bbox:extent().y
+    return scale(scale_factor, scale_factor, scale_factor)*shape
+end
+
 function z_scale(shape, height)
     shape_bbox = bbox(shape)
     z_scale_factor = height / shape_bbox:extent().z
@@ -28,6 +47,11 @@ function xy_offs_to_center(shape)
     shape_center = shape_bbox:center()
 	xy_offs = v(-shape_center.x, -shape_center.y, 0)
 	return xy_offs
+end
+
+function move_bottom_to_z(shape, wanted_z)
+	wanted_z = wanted_z or 0
+	return translate(0,0,-(bbox(shape):min_corner().z)+wanted_z)*shape
 end
 
 function center_shape_xy(shape)
@@ -96,6 +120,19 @@ function extrude_svg(svg_file, extrude_height)
 	return svg_shape
 end
 
+function extrude_svg_contour(svg_file, extrude_height)
+	-- get all the contours from an SVG file and transform them to a single 3D shape
+	svg_shapes = svg_contouring(svg_file, 90)
+	svg_shape = linear_extrude(v(0, 0, extrude_height), svg_shapes[1]:outline())
+	for i,contour in pairs(svg_shapes) do
+		if i > 1 then
+			svg_shape = union(svg_shape, linear_extrude(v(0,0,extrude_height),contour:outline()))
+		end
+	end
+	
+	return svg_shape
+end
+
 function group_grid_offset(index, nb_col, spacing, max_size_x, max_size_y)
     x_step = max_size_x + spacing
     y_step = max_size_y + spacing
@@ -142,4 +179,88 @@ local binpack_new = require('binpack')function build_plate(shapes, x_max, y_max
 		local pos = bp:insert(s_extent.x+spacing, s_extent.y+spacing)
 		emit(translate(pos.x-s_min.x+spacing/2, pos.y-s_min.y+spacing/2, -(s_center.z-s_extent.z/2))*shape)
     end
+end
+
+function emit_multiple_shapes(shape, num, x_max, y_max, spacing)
+  shapes = {}
+  for i=1,num do
+    table.insert(shapes, shape)
+  end
+  build_plate(shapes, x_max, y_max, spacing)
+end
+
+function multiple_stl(fpath, num, x_max, y_max, spacing)
+  -- usage: multiple_stl(stl_file_path, 12, 200, 260, 2)
+  emit_multiple_shapes(load_centered_on_plate(fpath), num, x_max, y_max, spacing)
+end
+
+function hexagon_l(l, height)
+  w = l/(2*sin(60))
+  b = cube(w, l, height)
+  return(union({b, rotate(0, 0, 60)*b, rotate(0, 0, -60)*b}))
+end
+
+function hexagon_s(side, height)
+  l = side * (2*sin(60))
+  b = cube(side, l, height)
+  return(union({b, rotate(0, 0, 60)*b, rotate(0, 0, -60)*b}))
+end
+
+function triangle(b, h)
+  h = h or math.sqrt(b^2-(b/2)^2)
+  t = {v(-b/2,0,0), v(b/2,0,0), v(0,h,0)}
+  return t
+end
+
+function losange(side, small_diagonal)
+  b = small_diagonal or side
+  h = math.sqrt(side^2-(b/2)^2)
+  l = {v(-b/2,0,0), v(0,-h,0), v(b/2,0,0), v(0,h,0)}
+  return l
+end
+
+function prisme_base_triangle(side, z_height, triangle_height)
+  triangle_2d = triangle(side, triangle_height)
+  return linear_extrude(v(0,0,z_height), triangle_2d)
+end
+
+function prisme_base_losange(side, z_height, small_diagonal)
+  small_diagonal = small_diagonal or side
+  losange_2d = losange(side, small_diagonal)
+  return linear_extrude(v(0,0,z_height), losange_2d)
+end
+
+function torus(r_major, r_minor)
+	local points = {};
+	local indices = {};
+	for angle_major = 0, 361, 1 do
+		for angle_minor = 0, 361, 1 do
+			points[(360 * angle_minor) + angle_major] = v(
+				(r_major + r_minor*cos(angle_minor)) * cos(angle_major),
+				(r_major + r_minor*cos(angle_minor)) * sin(angle_major),
+				r_minor * sin(angle_minor));
+		end
+	end
+	for angle_major = 0, 360, 1 do
+		for angle_minor = 0, 360, 1 do
+			table.insert(indices, v(
+				(360*angle_minor) + angle_major,
+				(360*angle_minor) + ((1+angle_major)%360),
+				angle_major+(360*(angle_minor+1))));
+			table.insert(indices, v(
+				(360*angle_minor) + ((1+angle_major)%360),
+				((angle_major+1)%360)+(360*(angle_minor+1)),
+				angle_major+(360*(angle_minor+1))));
+		end
+	end
+	
+	return polyhedron(points, indices);
+end
+
+function pie_slice(r, h, angle)
+  s = cylinder(r, h)
+  c = translate(0,-r,0)*cube(r*3,r*2,h)
+  s = difference(s, rotate(0,0,-90+angle/2)*c)
+  s = difference(s, rotate(0,0,90-angle/2)*c)
+  return s
 end

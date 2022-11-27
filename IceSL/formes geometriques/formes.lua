@@ -22,11 +22,6 @@ function sphere_()
   return sphere(radius, v(0, 0, radius))
 end
 
-function prisme_base_triangle()
-  triangle = {v(-width/2,0,0), v(width/2,0,0), v(0,triangle_y,0)}
-  return linear_extrude(v(0,0,height), triangle)
-end
-
 function prisme_base_carree()
   return cube(width, width, height)
 end
@@ -80,7 +75,7 @@ function egg()
     return scale(v(53, 53, 53))*egg_base()
 end
 
---simple_shapes = {cylindre(), cone_(), cube_(), prisme_base_triangle(), prisme_base_carree(), pyramide_base_triangle(), pyramide_base_carree()}
+--simple_shapes = {cylindre(), cone_(), cube_(), prisme_base_triangle(width, height), prisme_base_carree(), pyramide_base_triangle(), pyramide_base_carree()}
 
 complex_shapes = {sphere_(), ellipsoid(), egg()}
 
